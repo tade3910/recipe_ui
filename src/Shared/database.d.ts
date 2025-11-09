@@ -1,9 +1,5 @@
-interface Recipe {
-  title: string;
-  imgSrc?: string;
-  ingredients: string[];
-  instructions: string[];
-  Url: string;
+interface Recipe extends ClientRecipe{
+  id:string
 }
 
 interface User {

@@ -13,14 +13,17 @@ export default function ParsedRecipe({ url }: { url: string }) {
   const [setIngredients, updateSetIngredients] = useState<number>(noSetItems);
 
   const form = useForm<RecipeFormValues>({
-    mode: 'uncontrolled',
     initialValues: {
       title: '',
-      ingredients: [],
-      instructions: [],
+      ingredients: [], // array of objects
+      instructions: [], // array of objects
       image: [],
     },
-    //TODO: Need to add validate
+    validate: {
+      // top-level title validation
+      title: (value) =>
+        value.length < 4 ? 'Title must have at least 4 characters' : null,
+    },
   });
 
   //TODO: Iron out bug here
@@ -143,7 +146,7 @@ export default function ParsedRecipe({ url }: { url: string }) {
           </Stack>
         </SimpleGrid>
       ) : (
-        <LoadedRecipe editing={true} form={form} />
+        <LoadedRecipe editing={true} form={form} url={url} />
       )}
     </SimpleGrid>
   );

@@ -10,4 +10,13 @@ interface RecipeFormValues {
   image: FileWithPath[];
 }
 
+interface ClientRecipe {
+  title: string;
+  imgSrc?: string;
+  ingredients: string[];
+  instructions: string[];
+  url: string;
+  owner: string;
+}
+
 type ListType = 'ingredients' | 'instructions';

@@ -10,9 +10,8 @@ import {
   Title,
 } from '@mantine/core';
 import { IconCircleDashed, IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import type { UseFormReturnType } from '@mantine/form';
+import { useForm, type UseFormReturnType } from '@mantine/form';
 import SortableInputList from './SortableInputList';
 import { randomId } from '@mantine/hooks';
 
@@ -42,17 +41,44 @@ interface UneditableItemListProps extends ItemListProps {
 export default function ItemList(
   props: EditableItemListProps | UneditableItemListProps,
 ) {
-  const [addedItem, setAddedItem] = useState<string>('');
+  // const [addedItem, setAddedItem] = useState<string>('');
+  const addForm = useForm({
+    initialValues: { value: '' },
+  });
 
   function addItem() {
-    if (props.edit) {
-      const form = props.form;
-      form.insertListItem(props.listType, {
-        value: addedItem,
-        key: randomId(),
-      });
-      setAddedItem('');
+    if (!props.edit) return;
+
+    const form = props.form;
+    const value = addForm.getValues().value.trim();
+    // Validation before adding
+    if (props.listType === 'ingredients') {
+      if (value.length < 4) {
+        addForm.setFieldError(
+          'value',
+          'Ingredient must have at least 4 characters',
+        );
+        return;
+      }
+    } else if (props.listType === 'instructions') {
+      if (value.length < 10) {
+        addForm.setFieldError(
+          'value',
+          'Instruction must have at least 10 characters',
+        );
+        return;
+      }
     }
+
+    // If validation passes, add new item
+    form.insertListItem(props.listType, {
+      value,
+      key: randomId(),
+    });
+
+    // Clear input and remove error if any
+    addForm.setFieldValue('value', '');
+    addForm.clearFieldError('value');
   }
 
   function deleteItem(index: number) {
@@ -98,8 +124,7 @@ export default function ItemList(
 
           <Group>
             <TextInput
-              value={addedItem}
-              onChange={(event) => setAddedItem(event.currentTarget.value)}
+              {...addForm.getInputProps('value')}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
                   addItem();

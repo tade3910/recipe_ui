@@ -17,11 +17,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppShell>
+        <AppShell header={{ height: 80 }}>
           <AppShell.Header>
             <Header />
           </AppShell.Header>
-          <AppShell.Main pt="80">
+          <AppShell.Main>
             <Routes>
               <Route
                 path="/"

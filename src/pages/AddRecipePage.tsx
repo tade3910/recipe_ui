@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
-import { Button, Center, Group, Stack, TextInput, Title } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Group,
+  Space,
+  Stack,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import ParsedRecipe from '../components/ParsedRecipe';
 const MyForm = () => {
   const [parsedUrl, SetParsdeUrl] = useState<string>('');
@@ -66,6 +74,7 @@ const MyForm = () => {
               </Button>
             </Group>
           </form>
+          <Space h="md" />
         </Stack>
       </Center>
       {parsedUrl && <ParsedRecipe url={form.getValues()['url']} />}

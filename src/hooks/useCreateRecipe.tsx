@@ -9,7 +9,7 @@ import { APIURL } from '../Util/ApiSettings';
 function useCreateRecipe() {
   const queryClient = useQueryClient();
 
-  const createRecipe = async (info: Recipe) => {
+  const createRecipe = async (info: ClientRecipe) => {
     try {
       const url = `${APIURL}/recipe/`;
       const data = await axios.post(url, info);
@@ -20,7 +20,7 @@ function useCreateRecipe() {
   };
 
   const mutation = useMutation(
-    (info: Recipe) => {
+    (info: ClientRecipe) => {
       return createRecipe(info);
     },
     {
@@ -31,7 +31,7 @@ function useCreateRecipe() {
   );
 
   return {
-    recipeMutation: mutation,
+    createRecipeMutation: mutation,
   };
 }
 
