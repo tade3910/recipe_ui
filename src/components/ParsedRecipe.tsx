@@ -2,19 +2,11 @@ import { ScrollArea, SimpleGrid, Skeleton, Stack, Title } from '@mantine/core';
 import useQueryParseRecipe from '../hooks/useQueryParseRecipe';
 import { useForm } from '@mantine/form';
 import CardList from './CardList';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import LoadedRecipe from './FullRecipe/LoadedRecipe';
 
 export default function ParsedRecipe({ url }: { url: string }) {
   type ItemType = 'ingredients' | 'instructions';
-  // interface setItemDetails {
-  //   setItem: number;
-  //   dataIndexToFormIndex: Record<number, number>; //Map of index in data to entry in form
-  // }
-  // const noSetItems = {
-  //   setItem: -1,
-  //   dataIndexToFormIndex: {},
-  // };
   const noSetItems = -1;
   const { data, status } = useQueryParseRecipe(url);
   const [setInstructions, updateSetInstructions] = useState<number>(noSetItems);
@@ -27,15 +19,9 @@ export default function ParsedRecipe({ url }: { url: string }) {
       ingredients: [],
       instructions: [],
       image: [],
-      dataToFormIndexIngredients: {},
-      dataToFormIndexInstructions: {},
     },
     //TODO: Need to add validate
   });
-
-  useEffect(() => {
-    console.log(form.getValues()['dataToFormIndexInstructions']);
-  }, [form.getValues()['dataToFormIndexInstructions']]);
 
   //TODO: Iron out bug here
   function unsetItems(itemType: ItemType) {
@@ -43,27 +29,25 @@ export default function ParsedRecipe({ url }: { url: string }) {
       //Will only be called if there's data anyway
       return;
     }
-    const dataIndexToFormIndex =
-      itemType == 'ingredients'
-        ? form.getValues()['dataToFormIndexInstructions']
-        : form.getValues()['dataToFormIndexInstructions'];
+    let setList: KeyEntry<string>[];
     if (itemType == 'ingredients') {
+      if (setIngredients == -1) {
+        return; //Nothing to do
+      }
+      setList = data.ingredients[setIngredients];
       updateSetIngredients(noSetItems);
     } else {
+      if (setInstructions == -1) {
+        return; //Nothing to do
+      }
+      setList = data.instructions[setInstructions];
       updateSetInstructions(noSetItems);
     }
-    const relevantList = form.getValues()[itemType];
-    const toRemoveIndexes = new Set(Object.values(dataIndexToFormIndex));
-    const updatedList = relevantList.filter(
-      (_, index) => !toRemoveIndexes.has(index),
-    );
-    console.log(updatedList);
-    form.setFieldValue(itemType, updatedList);
-    //Clear out maps
-    if (itemType == 'ingredients') {
-      form.setFieldValue('dataToFormIndexInstructions', {});
-    } else {
-      form.setFieldValue('dataToFormIndexInstructions', {});
+    for (const entry of setList) {
+      const index = form
+        .getValues()
+        [itemType].findIndex((e) => e.key === entry.key);
+      form.removeListItem(itemType, index);
     }
   }
 
@@ -81,23 +65,13 @@ export default function ParsedRecipe({ url }: { url: string }) {
     unsetItems(itemType);
     // Get relevant entry
     const relevantList = form.getValues()[itemType];
-    console.log(relevantList);
-    const toAddItems =
-      itemType === 'ingredients'
-        ? data.ingredients[index]
-        : data.instructions[index];
-    const dataIndexToFormIndex: Record<number, number> = {};
-    for (let i = 0; i < toAddItems.length; i++) {
-      let formIndex = relevantList.length + i;
-      dataIndexToFormIndex[i] = formIndex;
-    }
-    //Update state
-    if (itemType == 'ingredients') {
+    let toAddItems: KeyEntry<string>[];
+    if (itemType === 'ingredients') {
+      toAddItems = data.ingredients[index];
       updateSetIngredients(index);
-      form.setFieldValue('dataToFormIndexInstructions', dataIndexToFormIndex);
     } else {
+      toAddItems = data.instructions[index];
       updateSetInstructions(index);
-      form.setFieldValue('dataToFormIndexInstructions', dataIndexToFormIndex);
     }
     //Update form
     form.setFieldValue(itemType, [...relevantList, ...toAddItems]);
@@ -121,7 +95,7 @@ export default function ParsedRecipe({ url }: { url: string }) {
                 ))
               : data.instructions.map((possibleInstructions, i) => (
                   <CardList
-                    listItems={possibleInstructions}
+                    listItems={possibleInstructions.map((val) => val.value)}
                     key={i}
                     index={i}
                     setItem={setInstructions}
@@ -146,7 +120,7 @@ export default function ParsedRecipe({ url }: { url: string }) {
                 ))
               : data.ingredients.map((possibleIngredients, i) => (
                   <CardList
-                    listItems={possibleIngredients}
+                    listItems={possibleIngredients.map((val) => val.value)}
                     key={i}
                     index={i}
                     setItem={setIngredients}

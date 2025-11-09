@@ -19,7 +19,6 @@ export default function Header() {
   const { logout } = useAuth();
 
   const searchRecipes = () => {
-    console.log(searchValue);
     setSearchValue('');
     navigate('/recipe/1');
   };

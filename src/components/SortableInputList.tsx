@@ -58,7 +58,10 @@ export default function SortableList({ form, deleteItem }: SortableListProps) {
       const employees = form.getValues().instructions;
       const oldIndex = employees.findIndex((e) => e.key === active.id);
       const newIndex = employees.findIndex((e) => e.key === over.id);
-      form.setFieldValue('employees', arrayMove(employees, oldIndex, newIndex));
+      form.setFieldValue(
+        'instructions',
+        arrayMove(employees, oldIndex, newIndex),
+      );
     }
   };
 
@@ -74,7 +77,7 @@ export default function SortableList({ form, deleteItem }: SortableListProps) {
             <Grid>
               <Grid.Col span={10}>
                 <TextInput
-                  {...form.getInputProps(`${'instructions'}.${index}`)}
+                  {...form.getInputProps(`${'instructions'}.${index}.value`)}
                 />
               </Grid.Col>
               <Grid.Col span={1}>
@@ -83,7 +86,6 @@ export default function SortableList({ form, deleteItem }: SortableListProps) {
                   aria-label="Delete item"
                   onClick={(e) => {
                     e.stopPropagation(); // prevent drag-kit from intercepting
-                    console.log(index);
                     deleteItem(index);
                   }}
                   onPointerDown={(e) => e.stopPropagation()} // also prevents dnd-kit drag start

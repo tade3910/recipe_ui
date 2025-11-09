@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query';
 import { cacheSettings } from '../Util/ApiSettings';
+import { randomId } from '@mantine/hooks';
 
 export default function useQueryParseRecipe(url: string) {
   const queryKey = ['parseRecipe', url];
@@ -16,7 +17,24 @@ export default function useQueryParseRecipe(url: string) {
         ['bake at 350', 'Get all the recipes'],
       ],
     };
-    return response;
+    const ingredients: KeyEntry<string>[][] = response.ingredients.map(
+      (possibleIngredients) => {
+        return possibleIngredients.map((ingredient) => {
+          return { value: ingredient, key: randomId() };
+        });
+      },
+    );
+    const instructions: KeyEntry<string>[][] = response.instructions.map(
+      (possibleInstructions) => {
+        return possibleInstructions.map((instruction) => {
+          return { value: instruction, key: randomId() };
+        });
+      },
+    );
+    return {
+      ingredients: ingredients,
+      instructions: instructions,
+    };
   };
   return {
     ...useQuery(queryKey, parseRecipe, cacheSettings),
