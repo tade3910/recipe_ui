@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { cacheSettings } from '../Util/QuerySettings';
+import { cacheSettings } from '../Util/ApiSettings';
 
 export default function useQueryBookmarks(user_id: string, page: string) {
   const queryKey = ['Recipes', user_id, page];

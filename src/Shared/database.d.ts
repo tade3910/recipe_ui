@@ -1,13 +1,15 @@
 interface Recipe {
   title: string;
   imgSrc?: string;
-  description?: string;
   ingredients: string[];
   instructions: string[];
+  Url: string;
 }
 
 interface User {
-  recipes: string[];
+  token: string;
+  exp: number;
   email: string;
   name: string;
+  userid: string;
 }

@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
-import { cacheSettings } from '../Util/QuerySettings';
+import { cacheSettings } from '../Util/ApiSettings';
 
 export default function useQueryRecipe(id: string) {
   const queryKey = ['Recipe', id];
 
-  const getRecipeDate = async () => {
+  const getRecipeData = async () => {
     const response: Recipe = {
       description: `This is the desciprtion of recipe with id:${id}`,
       title: `Recipe: ${id}`,
@@ -16,6 +16,6 @@ export default function useQueryRecipe(id: string) {
     return response;
   };
   return {
-    ...useQuery(queryKey, getRecipeDate, cacheSettings),
+    ...useQuery(queryKey, getRecipeData, cacheSettings),
   };
 }

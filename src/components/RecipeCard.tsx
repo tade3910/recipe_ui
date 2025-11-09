@@ -44,11 +44,6 @@ export default function RecipeCard({ id }: RecipeCardProps) {
             <Group justify="space-between" mt="md" mb="xs">
               <Text fw={500}>{data.title}</Text>
             </Group>
-            {data.description && (
-              <Text size="sm" c="dimmed">
-                {data.description}
-              </Text>
-            )}
           </Card>
         </>
       )}

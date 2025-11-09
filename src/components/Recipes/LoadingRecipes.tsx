@@ -4,7 +4,7 @@ export default function LoadingRecipes() {
   return (
     <SimpleGrid cols={3}>
       {['', '', '', '', '', ''].map((_, index) => (
-        <Skeleton key={index} height={8} mt={6} radius="xl" />
+        <Skeleton key={index} height={500} mt={6} radius="xl" />
       ))}
     </SimpleGrid>
   );

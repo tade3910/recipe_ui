@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
+import '@mantine/dropzone/styles.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 

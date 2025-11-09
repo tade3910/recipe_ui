@@ -8,44 +8,21 @@ import {
   TextInput,
 } from '@mantine/core';
 import { IconCheck, IconPencil } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import type { QueryStatus } from 'react-query';
+import { useState } from 'react';
+import { useAuth } from '../Context/AuthContext';
 
 interface UserModalProps {
   modalOpened: boolean;
   setModalOpened: (value: React.SetStateAction<boolean>) => void;
-  userData?: User;
-  status: QueryStatus;
 }
 
 export default function UserModal({
   modalOpened,
   setModalOpened,
-  userData,
-  status,
 }: UserModalProps) {
   const [editName, setEditName] = useState<boolean>(false);
-  const loadingUser: User = {
-    name: 'loading...',
-    email: 'loading...',
-    recipes: [],
-  };
-  const [user, setUser] = useState<User>(loadingUser);
 
-  useEffect(() => {
-    if (status == 'success') {
-      setUser(userData!);
-    } else {
-      setUser(loadingUser);
-    }
-  }, [status]);
-
-  const updateUserName = (username: string) => {
-    setUser((prev) => ({
-      ...prev,
-      name: username,
-    }));
-  }
+  const { user, updateUserName } = useAuth();
 
   return (
     <>
@@ -60,7 +37,7 @@ export default function UserModal({
             {editName ? (
               <>
                 <TextInput
-                  value={user.name}
+                  value={user!.name}
                   onChange={(e) => updateUserName(e.currentTarget.value)}
                 />
                 <ActionIcon onClick={() => setEditName(false)}>
@@ -69,7 +46,7 @@ export default function UserModal({
               </>
             ) : (
               <>
-                <Text size="md">{user.name}</Text>
+                <Text size="md">{user!.name}</Text>
                 <ActionIcon
                   onClick={() => setEditName(true)}
                   disabled={status !== 'success'}
@@ -80,7 +57,7 @@ export default function UserModal({
             )}
           </Group>
           <Title order={3}>Email</Title>
-          <Text size="md">{user.email}</Text>
+          <Text size="md">{user!.email}</Text>
         </Stack>
       </Modal>
     </>

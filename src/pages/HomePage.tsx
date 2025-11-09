@@ -1,14 +1,17 @@
-import useQueryUser from '../hooks/useQueryUser';
 import Recipes from '../components/Recipes/Recipes';
 import { useEffect, useState } from 'react';
+import useQueryRecipes from '../hooks/useQueryRecipes';
+import { useAuth } from '../Context/AuthContext';
 
 function HomePage() {
-  const { data, status } = useQueryUser('user_id');
+  const { user } = useAuth();
+  const [page, setPage] = useState(0);
+  const { data, status } = useQueryRecipes(user!.userid, page); //This is a protected route, user will be there
   const [recipes, setRecipes] = useState<string[]>([]);
 
   useEffect(() => {
     if (status == 'success') {
-      setRecipes(data.recipes);
+      setRecipes(data);
     } else {
       setRecipes([]);
     }

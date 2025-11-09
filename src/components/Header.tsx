@@ -9,15 +9,14 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserModal from './UserModal';
-import useQueryUser from '../hooks/useQueryUser';
+import { useAuth } from '../Context/AuthContext';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState<string>('');
   const [modalOpened, setModalOpened] = useState<boolean>(false);
   const [menuOpened, setMenuOpened] = useState(false);
-  const { data, status } = useQueryUser('user_id');
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const searchRecipes = () => {
     console.log(searchValue);
@@ -74,19 +73,20 @@ export default function Header() {
                   Profile
                 </Text>
               </Menu.Item>
-              <Menu.Item leftSection={<IconLogout2 size={14} />}>
+              <Menu.Item
+                leftSection={<IconLogout2 size={14} />}
+                onClick={logout}
+              >
                 Sign out
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>
       </Grid.Col>
-      <UserModal
+      {/* <UserModal
         modalOpened={modalOpened}
         setModalOpened={setModalOpened}
-        userData={data}
-        status={status}
-      />
+      /> */}
     </Grid>
   );
 }

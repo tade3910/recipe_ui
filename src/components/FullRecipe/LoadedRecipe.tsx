@@ -1,44 +1,92 @@
-import { Grid, Stack, Title } from '@mantine/core';
+import { SimpleGrid, Stack, TextInput, Title } from '@mantine/core';
 import RecipeImage from '../RecipeImage';
-import RecipeList from '../RecipeList';
-import { useState } from 'react';
+import ItemList from '../ItemList';
+import type { UseFormReturnType } from '@mantine/form';
+import ImageDropZone from '../ImageDropZone';
+import type { FileWithPath } from '@mantine/dropzone';
 
-interface LoadedRecipeProps {
+interface NoEditRecipeProps {
+  editing: false;
   recipe: Recipe;
-  editing: boolean;
 }
 
-export default function LoadedRecipe({ recipe, editing }: LoadedRecipeProps) {
-  const [ingredients, setIngredients] = useState<string[]>(recipe.ingredients);
-  const [instructions, setInstructions] = useState<string[]>(
-    recipe.instructions,
-  );
-  const ingredientsType = editing ? 'edit' : 'view';
-  const instructionsType = editing ? 'edit' : 'check';
+interface EditRecipeProps {
+  editing: true;
+  form: UseFormReturnType<
+    RecipeFormValues,
+    (values: RecipeFormValues) => RecipeFormValues
+  >;
+}
+
+export default function LoadedRecipe(
+  props: NoEditRecipeProps | EditRecipeProps,
+) {
+  function setImage(files: FileWithPath[]) {
+    if (props.editing) {
+      props.form.setFieldValue('image', files);
+    }
+  }
+
   return (
-    <Grid>
-      <Grid.Col>
-        <Stack>
-          <RecipeImage imgSrc={recipe.imgSrc} />
-          <RecipeList
-            items={ingredients}
-            title="Ingredients"
-            setItems={setIngredients}
-            listType={ingredientsType}
-          />
-        </Stack>
-      </Grid.Col>
-      <Grid.Col>
-        <Stack>
-          <Title order={3}>{recipe.title}</Title>
-          <RecipeList
-            items={instructions}
-            title="Instructions"
-            setItems={setInstructions}
-            listType={instructionsType}
-          />
-        </Stack>
-      </Grid.Col>
-    </Grid>
+    <SimpleGrid cols={2}>
+      <Stack>
+        {props.editing ? (
+          <>
+            <ImageDropZone
+              files={props.form.getValues()['image']}
+              setFiles={setImage}
+            />
+            <ItemList
+              title="Instructions"
+              edit={props.editing}
+              form={props.form}
+              listType="instructions"
+            />
+          </>
+        ) : (
+          <>
+            <RecipeImage imgSrc={props.recipe.imgSrc} />
+            <ItemList
+              title="Instructions"
+              edit={props.editing}
+              items={props.recipe.instructions}
+              listType="instructions"
+            />
+          </>
+        )}
+      </Stack>
+      <Stack>
+        {props.editing ? (
+          <>
+            <TextInput
+              label="Title"
+              {...props.form.getInputProps('title')}
+              styles={{
+                input: {
+                  height: '10vh',
+                  fontSize: '1.5rem',
+                },
+              }}
+            />
+            <ItemList
+              title="Ingredients"
+              edit={props.editing}
+              form={props.form}
+              listType="ingredients"
+            />
+          </>
+        ) : (
+          <>
+            <Title order={3}>{props.recipe.title}</Title>
+            <ItemList
+              listType="ingredients"
+              title="Ingredients"
+              edit={props.editing}
+              items={props.recipe.instructions}
+            />
+          </>
+        )}
+      </Stack>
+    </SimpleGrid>
   );
 }

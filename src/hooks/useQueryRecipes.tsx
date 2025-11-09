@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
-import { cacheSettings } from '../Util/QuerySettings';
+import { cacheSettings } from '../Util/ApiSettings';
 
-export default function useQueryRecipes(user_id: string, page: string) {
+export default function useQueryRecipes(user_id: string, page: number) {
   const queryKey = ['Recipes', user_id, page];
 
   const getRecipesData = async () => {
